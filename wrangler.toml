@@ -1,4 +1,26 @@
 pages_build_output_dir = "dist"
 compatibility_date = "2024-11-12"
 
-# KV / D1 / Queues bindings (keep ours)
+[vars]
+FROM_EMAIL = "hello@spraxxx.com"
+BRAND = "SPRAXXX"
+
+# Secrets to be set in CF dashboard or `wrangler secret put`
+# SENDGRID_API_KEY, SIGNING_KEY
+
+[[kv_namespaces]]
+binding = "SUBSCRIBERS"
+id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+[[queues.producers]]
+queue = "outbox"
+binding = "OUTBOX"
+
+[[queues.consumers]]
+queue = "outbox"
+max_batch_size = 50
+max_batch_timeout = 10
+worker = "mailer"
+
+[triggers]
+crons = ["0 14 * * *"]  # daily 14:00 UTC for drip progression
